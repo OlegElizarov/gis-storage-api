@@ -15,6 +15,16 @@ type Filter struct {
 
 func (f Filter) Apply(sql *goqu.SelectDataset) *goqu.SelectDataset {
 	switch f.keyType {
+	case boolType:
+		if len(f.Values) > 1 {
+			return nil
+		}
+		return sql.Where(
+			goqu.C(f.Name).Eq(f.Values[0]),
+		)
+	case timestampType:
+		panic("unimplemented")
+
 	case stringType:
 		values := make([]interface{}, len(f.Values))
 		for ind := range f.Values {
@@ -79,6 +89,8 @@ var fieldsMap = map[string]struct {
 	Separator string
 	Type      string
 }{
+	// tree_data
+	//"id":       {Separator: ";", Type: intType},
 	"gis_id":           {Separator: ";", Type: intType},
 	"pcd_name":         {Separator: ",", Type: stringType},
 	"x_coordinate":     {Separator: ";", Type: floatType},
@@ -90,10 +102,21 @@ var fieldsMap = map[string]struct {
 	"circle":           {Separator: ";", Type: floatType},
 	"diameter_mitro":   {Separator: ";", Type: floatType},
 	"diameter_il":      {Separator: ";", Type: floatType},
+	// tree_growth
+
+	//"gis_id":   {Separator: ";", Type: intType},
+	//"id":       {Separator: ";", Type: intType},
+	"ts":       {Separator: ";", Type: timestampType},
+	"age":      {Separator: ";", Type: intType},
+	"diameter": {Separator: ";", Type: floatType},
+	"height":   {Separator: ";", Type: floatType},
+	"is_alive": {Separator: ";", Type: boolType},
 }
 
 const (
-	intType    = "int64"
-	floatType  = "float64"
-	stringType = "string"
+	intType       = "int64"
+	floatType     = "float64"
+	stringType    = "string"
+	boolType      = "bool"
+	timestampType = "ts"
 )

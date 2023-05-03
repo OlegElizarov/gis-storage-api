@@ -25,6 +25,5 @@ create table if not exists tree_growth
     is_alive boolean
 );
 
-select id
-from tree_data
-limit 1;
+insert into tree_growth
+values (default, 99999, now(), 88888, 777.77, 666.66, true);

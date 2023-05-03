@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"gis-storage-api/internal/models"
 	"github.com/doug-martin/goqu/v9"
@@ -43,6 +44,9 @@ func (tr *TreeRepository) GetTreeData(ctx context.Context, selection models.Sele
 		filter := filters.Data[ind]
 
 		sql = filter.Apply(sql)
+	}
+	if sql == nil {
+		return nil, errors.New("failed to build sql filters")
 	}
 
 	sqlRaw, _, _ := sql.ToSQL()
