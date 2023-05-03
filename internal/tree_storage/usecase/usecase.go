@@ -21,3 +21,11 @@ func (t TreeUsecase) GetTreeData(ctx context.Context, selection models.Selection
 func (t TreeUsecase) AddTreeData(ctx context.Context, trees []models.Tree) error {
 	return t.repository.AddTreeData(ctx, trees)
 }
+
+func (t TreeUsecase) GetTreeGrowth(ctx context.Context, selection models.Selection, filters models.Filters) ([]models.GrowthTree, error) {
+	return t.repository.GetTreeGrowth(ctx, selection, filters)
+}
+
+func (t TreeUsecase) AddTreeGrowth(ctx context.Context, trees []models.GrowthTree) error {
+	return t.repository.AddTreeGrowth(ctx, trees)
+}

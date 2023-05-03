@@ -11,8 +11,13 @@ import (
 	"strings"
 )
 
-var allFields = "gis_id, pcd_name, x_coordinate, y_coordinate, gis_height_mitro, gis_height_il, order_number, tree_type, circle, diameter_mitro, diameter_il"
-var allFieldsColumns = strings.Split(allFields, ", ")
+var (
+	allTreeDataFields        = "gis_id, pcd_name, x_coordinate, y_coordinate, gis_height_mitro, gis_height_il, order_number, tree_type, circle, diameter_mitro, diameter_il"
+	allTreeDataFieldsColumns = strings.Split(allTreeDataFields, ", ")
+
+	allTreeGrowthFields        = "gis_id, ts, age, diameter, height, is_alive"
+	allTreegrowthFieldsColumns = strings.Split(allTreeGrowthFields, ", ")
+)
 
 type TreeRepository struct {
 	db *pgx.Conn
@@ -28,7 +33,7 @@ func (tr *TreeRepository) GetTreeData(ctx context.Context, selection models.Sele
 	if len(selection.Fields) != 0 {
 		source = selection.Fields
 	} else {
-		source = allFieldsColumns
+		source = allTreeDataFieldsColumns
 	}
 
 	for ind := range source {
@@ -65,7 +70,7 @@ func (tr *TreeRepository) GetTreeData(ctx context.Context, selection models.Sele
 }
 
 func (tr *TreeRepository) AddTreeData(ctx context.Context, trees []models.Tree) error {
-	sqlStr := `INSERT INTO tree_data(` + allFields + `) VALUES`
+	sqlStr := `INSERT INTO tree_data(` + allTreeDataFields + `) VALUES`
 
 	for _, tree := range trees {
 		sqlStr += fmt.Sprintf("(%d,'%s',%v,%v,%v,%v,%d,'%s',%v,%v,%v),",
@@ -82,4 +87,14 @@ func (tr *TreeRepository) AddTreeData(ctx context.Context, trees []models.Tree) 
 	//format all vals at once
 	_, err := tr.db.Exec(ctx, sqlStr)
 	return err
+}
+
+func (tr *TreeRepository) GetTreeGrowth(ctx context.Context, selection models.Selection, filters models.Filters) ([]models.GrowthTree, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (tr *TreeRepository) AddTreeGrowth(ctx context.Context, trees []models.GrowthTree) error {
+	//TODO implement me
+	panic("implement me")
 }
