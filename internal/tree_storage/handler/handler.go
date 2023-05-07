@@ -54,7 +54,7 @@ func (ts *TreeStorage) GetTreeDataJson(c *gin.Context) {
 func (ts *TreeStorage) AddTreeDataJson(c *gin.Context) {
 	var trees []models.Tree
 
-	err := readTypedRequestData(c, &trees)
+	err := readTypedRequestData[models.Tree](c, &trees)
 	if err != nil {
 		writeError(c, err)
 		return
@@ -78,7 +78,7 @@ func (ts *TreeStorage) GetTreeGrowthDataJson(c *gin.Context) {
 
 	filters.Fill(c.Request.URL.Query())
 
-	trees, err := ts.usecase.GetTreeData(c, models.Selection{Fields: selectionRules}, filters)
+	trees, err := ts.usecase.GetTreeGrowth(c, models.Selection{Fields: selectionRules}, filters)
 	if err != nil {
 		writeError(c, err)
 		return
@@ -94,15 +94,15 @@ func (ts *TreeStorage) GetTreeGrowthDataJson(c *gin.Context) {
 }
 
 func (ts *TreeStorage) AddTreeGrowthDataJson(c *gin.Context) {
-	var trees []models.Tree
+	trees := []models.GrowthTree{}
 
-	err := readTypedRequestData(c, &trees)
+	err := readTypedRequestData[models.GrowthTree](c, &trees)
 	if err != nil {
 		writeError(c, err)
 		return
 	}
 
-	err = ts.usecase.AddTreeData(c, trees)
+	err = ts.usecase.AddTreeGrowth(c, trees)
 	if err != nil {
 		writeError(c, err)
 		return

@@ -19,6 +19,11 @@ var (
 	allTreegrowthFieldsColumns = strings.Split(allTreeGrowthFields, ", ")
 )
 
+const (
+	treeDataTable   = "tree_data"
+	treeGrowthTable = "tree_growth"
+)
+
 type TreeRepository struct {
 	db *pgx.Conn
 }
@@ -40,7 +45,7 @@ func (tr *TreeRepository) GetTreeData(ctx context.Context, selection models.Sele
 		fields = append(fields, source[ind])
 	}
 
-	sql := goqu.From("tree_data").
+	sql := goqu.From(treeDataTable).
 		Select(
 			fields...,
 		)
@@ -90,11 +95,61 @@ func (tr *TreeRepository) AddTreeData(ctx context.Context, trees []models.Tree) 
 }
 
 func (tr *TreeRepository) GetTreeGrowth(ctx context.Context, selection models.Selection, filters models.Filters) ([]models.GrowthTree, error) {
-	//TODO implement me
-	panic("implement me")
+	var fields []interface{}
+	var source []string
+	if len(selection.Fields) != 0 {
+		source = selection.Fields
+	} else {
+		source = allTreegrowthFieldsColumns
+	}
+
+	for ind := range source {
+		fields = append(fields, source[ind])
+	}
+
+	sql := goqu.From(treeGrowthTable).
+		Select(
+			fields...,
+		)
+
+	for ind := range filters.Data {
+		filter := filters.Data[ind]
+
+		sql = filter.Apply(sql)
+	}
+	if sql == nil {
+		return nil, errors.New("failed to build sql filters")
+	}
+
+	sqlRaw, _, _ := sql.ToSQL()
+
+	row, err := tr.db.Query(context.Background(), sqlRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	trees := []models.GrowthTree{}
+	err = pgxscan.ScanAll(&trees, row)
+	if err != nil {
+		return nil, err
+	}
+	return trees, nil
 }
 
 func (tr *TreeRepository) AddTreeGrowth(ctx context.Context, trees []models.GrowthTree) error {
-	//TODO implement me
-	panic("implement me")
+	sqlStr := `INSERT INTO tree_growth(` + allTreeGrowthFields + `) VALUES`
+
+	for _, tree := range trees {
+		sqlStr += fmt.Sprintf("(%d,'%s',%d,%v,%v,%v),",
+			tree.GisID, tree.TS.String(), tree.Age,
+			tree.Diameter, tree.Height, tree.IsAlive,
+		)
+	}
+	//trim the last ,
+	sqlStr = sqlStr[0 : len(sqlStr)-1]
+	sqlStr += " on conflict do nothing"
+
+	//format all vals at once
+	_, err := tr.db.Exec(ctx, sqlStr)
+	return err
 }

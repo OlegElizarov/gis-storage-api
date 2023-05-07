@@ -23,7 +23,27 @@ func (f Filter) Apply(sql *goqu.SelectDataset) *goqu.SelectDataset {
 			goqu.C(f.Name).Eq(f.Values[0]),
 		)
 	case timestampType:
-		panic("unimplemented")
+		if len(f.Values) == 2 {
+			if f.Values[0] == f.Values[1] {
+				return sql.Where(
+					goqu.C(f.Name).Eq(f.Values[0]),
+				)
+			}
+			return sql.
+				Where(
+					goqu.C(f.Name).Gte(f.Values[0]),
+					goqu.C(f.Name).Lte(f.Values[1]),
+				)
+		}
+
+		values := make([]interface{}, len(f.Values))
+		for ind := range f.Values {
+			values[ind] = f.Values[ind]
+		}
+
+		return sql.Where(
+			goqu.C(f.Name).In(values...),
+		)
 
 	case stringType:
 		values := make([]interface{}, len(f.Values))

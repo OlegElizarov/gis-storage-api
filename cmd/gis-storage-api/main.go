@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/csv"
-	"fmt"
 	"gis-storage-api/internal/server"
 	"github.com/gocarina/gocsv"
 	"github.com/jackc/pgx/v5"
@@ -21,7 +20,6 @@ func main() {
 
 	db, err := InitDatabase(ctx)
 	if err != nil {
-		fmt.Println("QQQ", err)
 		return
 	}
 

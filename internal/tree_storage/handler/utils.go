@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -16,7 +15,6 @@ const (
 )
 
 func writeError(c *gin.Context, err error) {
-	fmt.Println(err)
 	c.Writer.WriteHeader(500)
 	c.Writer.Write([]byte("error: " + err.Error()))
 }
@@ -44,7 +42,7 @@ func writeTypedResponse(c *gin.Context, data any) error {
 	return nil
 }
 
-func readTypedRequestData(c *gin.Context, dst any) error {
+func readTypedRequestData[T comparable](c *gin.Context, dst *[]T) error {
 	file, err := c.FormFile("data")
 	if err != nil {
 		return err
@@ -62,9 +60,9 @@ func readTypedRequestData(c *gin.Context, dst any) error {
 
 	switch dataType {
 	case "text/csv":
-		err = gocsv.UnmarshalBytes(fileData, &dst)
+		err = gocsv.UnmarshalBytes(fileData, dst)
 	case "application/json":
-		err = json.Unmarshal(fileData, &dst)
+		err = json.Unmarshal(fileData, dst)
 	}
 	if err != nil {
 		return err
