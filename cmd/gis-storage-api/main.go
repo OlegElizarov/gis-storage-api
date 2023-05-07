@@ -21,12 +21,14 @@ func main() {
 
 	db, err := InitDatabase(ctx)
 	if err != nil {
+		log.Println("failed to init to db:", err)
 		return
 	}
 
 	r := server.NewServer(db)
 	err = r.Run()
 	if err != nil {
+		log.Println("failed to init to app:", err)
 		return
 	}
 }
