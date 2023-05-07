@@ -7,6 +7,7 @@ import (
 	"github.com/gocarina/gocsv"
 	"github.com/jackc/pgx/v5"
 	"io"
+	"log"
 )
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 const dsn = `host=localhost port=5432 user=gis password=gis dbname=gis_storage sslmode=disable`
 
 func InitDatabase(ctx context.Context) (*pgx.Conn, error) {
+	log.Println("Initing database")
 	config, err := pgx.ParseConfig(dsn)
 	if err != nil {
 		return nil, err
