@@ -35,7 +35,7 @@ func main() {
 	}
 }
 
-const dsn = `host=localhost port=5432 user=gis password=gis dbname=gis_storage sslmode=disable`
+const dsn = `host=127.0.0.1 port=5432 user=gis password=gis dbname=gis_storage sslmode=disable`
 
 func InitDatabase(ctx context.Context) (*pgx.Conn, error) {
 	log.Println("Initing database")
