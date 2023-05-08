@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type GrowthTree struct {
 	GisID    int64    `db:"gis_id" json:"gis_id,omitempty" csv:"Номер дерева (ГИС/Прибит на ствол),omitempty"` // Номер дерева (ГИС/Прибит на ствол)
@@ -12,7 +15,7 @@ type GrowthTree struct {
 }
 
 type DateTime struct {
-	time.Time
+	sql.NullTime
 }
 
 // MarshalCSV convert the internal date as CSV string
@@ -22,7 +25,7 @@ func (date *DateTime) MarshalCSV() (string, error) {
 
 // You could also use the standard Stringer interface
 func (date *DateTime) String() string {
-	return date.Format("2006-01-02 15:04:05") // Redundant, just for example
+	return date.Time.Format("2006-01-02 15:04:05") // Redundant, just for example
 }
 
 // UnmarshalCSV convert the CSV string as internal date

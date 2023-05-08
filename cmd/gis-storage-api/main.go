@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"encoding/csv"
-	"gis-storage-api/internal/server"
-	"github.com/gocarina/gocsv"
-	"github.com/jackc/pgx/v5"
 	"io"
 	"log"
+
+	"github.com/gocarina/gocsv"
+	"github.com/jackc/pgx/v5"
+
+	"gis-storage-api/internal/server"
 )
 
 func main() {
