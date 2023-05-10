@@ -2,8 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
+	"mime/multipart"
 	"net/http"
+	"path"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
@@ -56,16 +59,35 @@ func readTypedRequestData[T comparable](c *gin.Context, dst *[]T) error {
 	if err != nil {
 		return nil
 	}
+	unmarshalFunc := getUnmarshalFunc(file)
+	if unmarshalFunc == nil {
+		return errors.New("wrong input file(extension or content-type)")
+	}
+
+	err = unmarshalFunc(fileData, dst)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getUnmarshalFunc(file *multipart.FileHeader) func([]byte, interface{}) error {
 	dataType := file.Header.Get("Content-Type")
 
 	switch dataType {
 	case "text/csv":
-		err = gocsv.UnmarshalBytes(fileData, dst)
+		return gocsv.UnmarshalBytes
 	case "application/json":
-		err = json.Unmarshal(fileData, dst)
+		return json.Unmarshal
 	}
-	if err != nil {
-		return err
+
+	extension := path.Ext(file.Filename)
+	switch extension {
+	case ".csv":
+		return gocsv.UnmarshalBytes
+	case ".json":
+		return json.Unmarshal
 	}
 
 	return nil
