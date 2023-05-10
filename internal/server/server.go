@@ -10,6 +10,7 @@ import (
 
 func NewServer(db *pgx.Conn) *gin.Engine {
 	r := gin.Default()
+	AddStaticServe(r)
 
 	treeRepository := repository.NewTreeRepository(db)
 
