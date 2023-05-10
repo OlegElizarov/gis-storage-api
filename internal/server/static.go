@@ -28,7 +28,7 @@ func AddStaticServe(r *gin.Engine) {
 
 			// TODO: check or sanitize input here
 
-			err := c.SaveUploadedFile(file, finalPath)
+			err := c.SaveUploadedFile(file, fileName)
 			if err != nil {
 				writeError(c, err)
 				return
