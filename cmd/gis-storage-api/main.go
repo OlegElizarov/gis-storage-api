@@ -21,6 +21,14 @@ func main() {
 		return r // Allows use pipe as delimiter
 	})
 
+	gocsv.SetCSVWriter(func(in io.Writer) *gocsv.SafeCSVWriter {
+		w := csv.NewWriter(in)
+		w.Comma = ';'
+		saveW := gocsv.NewSafeCSVWriter(w)
+		saveW.Comma = ';'
+		return saveW // Allows use pipe as delimiter
+	})
+
 	db, err := InitDatabase(ctx)
 	if err != nil {
 		log.Println("failed to init to db:", err)
