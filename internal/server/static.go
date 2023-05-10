@@ -11,7 +11,7 @@ import (
 func AddStaticServe(r *gin.Engine) {
 	r.StaticFS("/static", http.Dir("static"))
 
-	r.POST("/upload", func(c *gin.Context) {
+	r.POST("/api/v1/upload", func(c *gin.Context) {
 		// Multipart form
 		form, err := c.MultipartForm()
 		if err != nil {
